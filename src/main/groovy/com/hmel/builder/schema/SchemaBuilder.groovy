@@ -2,12 +2,13 @@ package com.hmel.builder.schema;
 
 import groovy.sql.Sql;
 import groovy.io.FileType;
+import com.hmel.builder.schema.properties.Schema;
 
 class SchemaBuilder {
 	
-	private def getSqlFile(def email) {
+	private def getSqlFile(def email, String sqlFiles) {
 		def lst = []
-		def dir = new File("sql-files/")
+		def dir = new File(sqlFiles)
 		dir.eachFileRecurse(FileType.FILES) {file ->
 			if(file.name.endsWith(".sql")) {
 				def flag = false
@@ -24,12 +25,12 @@ class SchemaBuilder {
 	return lst
 	}
 
-	public def update() {
-		def sql = Sql.newInstance("jdbc:mysql://localhost:3306/", "root", "", "com.mysql.jdbc.Driver")
+	public def update(Schema schema) {
+		def sql = Sql.newInstance(schema.datasource.url, schema.datasource.user, schema.datasource.password, schema.datasource.driver)
 		def email = ""
 		"git config --local user.email".execute().text.eachLine() { email+= it}
-		def sqlComment = "#"
-		getSqlFile(email).sort{it.name}.each { sqlSyntax ->
+		def sqlComment = schema.sqlComment
+		getSqlFile(email, schema.uriSqlFiles).sort{it.name}.each { sqlSyntax ->
 			println "Running ${sqlSyntax} script..."
 			String query = ""
 			sqlSyntax.eachLine() { line ->
@@ -41,7 +42,7 @@ class SchemaBuilder {
 					query = ""
 				}
 			}
-			sqlSyntax.append "\n${sqlCOmment}${email}"
+			sqlSyntax.append "\n${sqlComment}${email}"
 		}
-	}	
+	}
 }
