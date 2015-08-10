@@ -1,3 +1,4 @@
+apply plugin: 'eclipse'
 apply plugin: 'groovy'
 apply plugin: 'maven'
 
@@ -11,7 +12,7 @@ repositories {
 }
 
 group='com.hmel'
-version='0.1-SNAPSHOT'
+version='0.1.1-SNAPSHOT'
 
 uploadArchives {
 	repositories {
