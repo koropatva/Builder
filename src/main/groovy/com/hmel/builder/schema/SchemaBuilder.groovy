@@ -32,15 +32,15 @@ class SchemaBuilder {
 
 	public def update(Project project) {
 		println "INFO: URL - ${project.datasource.url}"
-		println "INFO: USER - ${project.datasource.user}"
-		println "INFO: PASSWORD - ${project.datasource.password}"
+		println "INFO: USER - ${project.datasource.login}"
+		println "INFO: PASSWORD - ${project.datasource.pswd}"
 		println "INFO: DRIVER - ${project.datasource.driver}"
 		try{
-			def sql = Sql.newInstance(project.datasource.url, project.datasource.user, project.datasource.password, project.datasource.driver)
+			def sql = Sql.newInstance(project.datasource.url, project.datasource.login, project.datasource.pswd, project.datasource.driver)
 			def email = ""
 			"git config --local user.email".execute().text.eachLine() { email+= it}
-			def sqlComment = project.schema.sqlComment
-			getSqlFile(email, project.schema.uriSqlFiles, project.schema.sqlSuffix).sort{it.name}.each { sqlSyntax ->
+			def sqlComment = project.schema.commentChar
+			getSqlFile(email, project.schema.fileUri, project.schema.fileExtensions).sort{it.name}.each { sqlSyntax ->
 				println "Running ${sqlSyntax} script..."
 				String query = ""
 				sqlSyntax.eachLine() { line ->
